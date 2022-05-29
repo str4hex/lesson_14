@@ -40,7 +40,7 @@ class BaseNeflixDAO:
             "country": result[0][1],
             "release_year": result[0][2],
             "genre": result[0][3],
-            "description": result[0][3]
+            "description": result[0][4]
         }
 
         return result_search
@@ -105,7 +105,7 @@ class BaseNeflixDAO:
     def search_rating_genre(self, genres):
         result = []
         cursor = self.load_connect()
-        sqlite_query = f"SELECT title,description FROM netflix WHERE listed_in LIKE '{genres}%' ORDER BY DESC LIMIT 10"
+        sqlite_query = f"SELECT title,description FROM netflix WHERE listed_in LIKE '%{genres}%' ORDER BY listed_in DESC LIMIT 10"
         cursor.execute(sqlite_query)
         executed_query = cursor.fetchall()
         for querys in range(len(executed_query)):
@@ -117,7 +117,7 @@ class BaseNeflixDAO:
 
     def name_cast(self, name_director_1, name_director_2):
         cursor = self.load_connect()
-        sqlite_query = f"SELECT netflix.cast FROM netflix  WHERE  netflix.cast LIKE '{name_director_1}%' OR '{name_director_2}%'"
+        sqlite_query = f"SELECT netflix.cast FROM netflix  WHERE  netflix.cast LIKE '%{name_director_1}%' OR '%{name_director_2}%'"
         cursor.execute(sqlite_query)
         executed_query = cursor.fetchall()
 
@@ -138,8 +138,7 @@ class BaseNeflixDAO:
         result_total.remove(name_director_2)
         return result_total
 
-
-    def get_by_type_movie(self,types,release,gengre):
+    def get_by_type_movie(self, types, release, gengre):
         cursor = self.load_connect()
         sqlite_query = f"SELECT title,description FROM netflix WHERE type = '{types}' AND release_year = '{release}' " \
                        f"AND listed_in LIKE '%{gengre}%'"
@@ -147,8 +146,8 @@ class BaseNeflixDAO:
         executed_query = cursor.fetchall()
         result = []
         for query in executed_query:
-            result.append({"title":query[0],
-                          "description":query[1]})
+            result.append({"title": query[0],
+                           "description": query[1]})
         return result
 
 
@@ -156,8 +155,7 @@ basenetflix = BaseNeflixDAO("netflix.db")
 result_name_cast = basenetflix.name_cast("Rose McIver", "Ben Lamb")
 
 basenetflix = BaseNeflixDAO("netflix.db")
-result_type_movie = basenetflix.get_by_type_movie("TV Show",2005,"Dramas")
-
+result_type_movie = basenetflix.get_by_type_movie("TV Show", 2005, "Dramas")
 
 print(result_name_cast)
 print(result_type_movie)
